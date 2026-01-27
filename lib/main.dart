@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/network/dio_client.dart';
 import 'data/datasources/remote/pokemon_remote_datasource.dart';
-import 'data/repositories/pokemon_repository.dart';
+import 'data/repositories/pokemon_repository_impl.dart';
 import 'features/pokedex/cubit/pokedex_cubit.dart';
+import 'features/pokedex/domain/usecases/get_pokemon_list_use_case.dart';
 import 'features/pokedex/screens/pokedex_screen.dart';
 
 void main() {
@@ -15,6 +16,10 @@ class PokedexApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final repository = PokemonRepositoryImpl(
+      PokemonRemoteDatasource(DioClient.instance),
+    );
+
     return MaterialApp(
       title: 'Pokédex',
       debugShowCheckedModeBanner: false,
@@ -24,9 +29,7 @@ class PokedexApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (_) => PokedexCubit(
-          PokemonRepository(
-            PokemonRemoteDatasource(DioClient.instance),
-          ),
+          GetPokemonListUseCase(repository),
         ),
         child: const PokedexScreen(),
       ),

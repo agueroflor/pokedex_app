@@ -1,25 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/api_constants.dart';
-import '../../../data/repositories/pokemon_repository.dart';
+import '../domain/usecases/get_pokemon_list_use_case.dart';
 import 'pokedex_state.dart';
 
 class PokedexCubit extends Cubit<PokedexState> {
-  final PokemonRepository _repository;
+  final GetPokemonListUseCase _getPokemonList;
 
-  PokedexCubit(this._repository) : super(const PokedexState());
+  PokedexCubit(this._getPokemonList) : super(const PokedexState());
 
   Future<void> loadInitial() async {
     emit(state.copyWith(
-  status: PokedexStatus.loading,
-  pokemon: [],
-  hasMore: true,
-  isLoadingMore: false,
-  errorMessage: null,
-));
-
+      status: PokedexStatus.loading,
+      pokemon: [],
+      hasMore: true,
+      isLoadingMore: false,
+      errorMessage: null,
+    ));
 
     try {
-      final result = await _repository.getPokemonList(
+      final result = await _getPokemonList(
         limit: ApiConstants.defaultPageSize,
         offset: 0,
       );
@@ -43,7 +42,7 @@ class PokedexCubit extends Cubit<PokedexState> {
     emit(state.copyWith(isLoadingMore: true));
 
     try {
-      final result = await _repository.getPokemonList(
+      final result = await _getPokemonList(
         limit: ApiConstants.defaultPageSize,
         offset: state.pokemon.length,
       );
