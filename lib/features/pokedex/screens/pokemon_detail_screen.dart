@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/cubits.dart';
+import '../widgets/widgets.dart';
+import '../../../core/constants/spacing.dart';
+import '../../../core/utils/responsive_utils.dart';
 import '../../../core/widgets/widgets.dart';
-import '../cubit/pokemon_detail_cubit.dart';
-import '../cubit/pokemon_detail_state.dart';
 import '../domain/entities/pokemon_detail.dart';
 
 class PokemonDetailScreen extends StatefulWidget {
@@ -33,7 +36,13 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
           return switch (state.status) {
             PokemonDetailStatus.initial ||
             PokemonDetailStatus.loading =>
-              const AppLoader(),
+              ResponsiveLayout(
+                mobile: const PokemonDetailSkeleton(),
+                tablet: const ContentContainer(
+                  maxWidth: 600,
+                  child: PokemonDetailSkeleton(),
+                ),
+              ),
             PokemonDetailStatus.error => AppError(
                 message: state.failure?.message ?? 'Ocurrió un error',
                 onRetry: () => context.read<PokemonDetailCubit>().load(),
@@ -59,63 +68,88 @@ class _DetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = ResponsiveUtils.isLandscape(context);
+    final isMobile = ResponsiveLayout.isMobile(context);
+
+    final verticalPadding = isLandscape && isMobile ? Spacing.md : Spacing.lg;
+    final imageSize = isLandscape && isMobile ? 140.0 : 200.0;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.symmetric(
+        horizontal: Spacing.lg,
+        vertical: verticalPadding,
+      ),
       child: Column(
         children: [
           Hero(
             tag: 'pokemon-${pokemon.id}',
             child: Image.network(
               pokemon.imageUrl,
-              height: 200,
+              height: imageSize,
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const SizedBox(
-                height: 200,
-                child: Icon(Icons.catching_pokemon, size: 100),
+              errorBuilder: (_, __, ___) => SizedBox(
+                height: imageSize,
+                child: const Icon(Icons.catching_pokemon, size: 80),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: isLandscape ? Spacing.sm : Spacing.md),
           Text(
             pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: ResponsiveUtils.scaledFontSize(context, 28),
                 ),
           ),
+          const SizedBox(height: Spacing.xs),
           Text(
             '#${pokemon.id.toString().padLeft(3, '0')}',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
+                  fontSize: ResponsiveUtils.scaledFontSize(context, 16),
                 ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: isLandscape ? Spacing.md : Spacing.lg),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: Spacing.sm,
+            runSpacing: Spacing.sm,
+            alignment: WrapAlignment.center,
             children: pokemon.types
                 .map((type) => Chip(
-                      label: Text(type),
+                      label: Text(
+                        type[0].toUpperCase() + type.substring(1),
+                        style: TextStyle(
+                          fontSize: ResponsiveUtils.scaledFontSize(context, 14),
+                        ),
+                      ),
                       backgroundColor:
                           Theme.of(context).colorScheme.secondaryContainer,
+                      padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
                     ))
                 .toList(),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: isLandscape ? Spacing.lg : Spacing.xl),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _StatCard(
-                icon: Icons.height,
-                label: 'Altura',
-                value: '${(pokemon.height / 10).toStringAsFixed(1)} m',
+              Expanded(
+                child: _StatCard(
+                  icon: Icons.height,
+                  label: 'Altura',
+                  value: '${(pokemon.height / 10).toStringAsFixed(1)} m',
+                ),
               ),
-              _StatCard(
-                icon: Icons.fitness_center,
-                label: 'Peso',
-                value: '${(pokemon.weight / 10).toStringAsFixed(1)} kg',
+              const SizedBox(width: Spacing.md),
+              Expanded(
+                child: _StatCard(
+                  icon: Icons.fitness_center,
+                  label: 'Peso',
+                  value: '${(pokemon.weight / 10).toStringAsFixed(1)} kg',
+                ),
               ),
             ],
           ),
+          SizedBox(height: verticalPadding),
         ],
       ),
     );
@@ -136,22 +170,28 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Spacing.lg,
+          vertical: Spacing.md,
+        ),
         child: Column(
           children: [
             Icon(
               icon,
               color: Theme.of(context).colorScheme.primary,
+              size: 28,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: Spacing.sm),
             Text(
               value,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    fontSize: ResponsiveUtils.scaledFontSize(context, 20),
                   ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: Spacing.xs),
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

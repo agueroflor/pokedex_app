@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/spacing.dart';
 import '../domain/entities/pokemon.dart';
 
 class PokemonListItem extends StatelessWidget {
@@ -15,6 +16,10 @@ class PokemonListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: Spacing.md,
+        vertical: Spacing.sm,
+      ),
       leading: Image.network(
         pokemon.imageUrl,
         width: 56,
@@ -28,9 +33,16 @@ class PokemonListItem extends StatelessWidget {
       ),
       title: Text(
         pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-        style: const TextStyle(fontWeight: FontWeight.w500),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
       ),
-      subtitle: Text('#${pokemon.id.toString().padLeft(3, '0')}'),
+      subtitle: Text(
+        '#${pokemon.id.toString().padLeft(3, '0')}',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.outline,
+            ),
+      ),
     );
   }
 }
