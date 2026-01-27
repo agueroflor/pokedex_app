@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'cubits.dart';
+import '../domain/failures/pokemon_failure.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../data/exceptions/pokemon_exceptions.dart';
-import '../domain/failures/pokemon_failure.dart';
 import '../domain/usecases/get_pokemon_list_use_case.dart';
-import 'pokedex_state.dart';
+
 
 class PokedexCubit extends Cubit<PokedexState> {
   final GetPokemonListUseCase _getPokemonList;

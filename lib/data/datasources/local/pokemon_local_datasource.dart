@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../models/pokemon_detail_model.dart';
-import '../../models/pokemon_list_item_model.dart';
+
+import '../../models/models.dart';
 
 class PokemonLocalDatasource {
   static const String _listBoxName = 'pokemon_list';

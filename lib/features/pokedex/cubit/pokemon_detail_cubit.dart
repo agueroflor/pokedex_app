@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/exceptions/pokemon_exceptions.dart';
+
+import 'cubits.dart';
 import '../domain/failures/pokemon_failure.dart';
+import '../../../data/exceptions/pokemon_exceptions.dart';
 import '../domain/usecases/get_pokemon_detail_use_case.dart';
-import 'pokemon_detail_state.dart';
 
 class PokemonDetailCubit extends Cubit<PokemonDetailState> {
   final GetPokemonDetailUseCase _getPokemonDetail;

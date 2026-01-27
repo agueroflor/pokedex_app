@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import '../../../core/constants/api_constants.dart';
-import '../../models/pokemon_detail_model.dart';
-import '../../models/pokemon_list_item_model.dart';
+
+import 'package:pokedex_app/data/models/models.dart';
+import 'package:pokedex_app/core/constants/api_constants.dart';
 
 class PokemonListResponse {
   final List<PokemonListItemModel> results;
