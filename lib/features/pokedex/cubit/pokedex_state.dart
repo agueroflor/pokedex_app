@@ -1,10 +1,10 @@
-import '../../../data/models/pokemon_list_item_model.dart';
+import '../domain/entities/pokemon.dart';
 
 enum PokedexStatus { initial, loading, success, error }
 
 class PokedexState {
   final PokedexStatus status;
-  final List<PokemonListItemModel> pokemon;
+  final List<Pokemon> pokemon;
   final bool hasMore;
   final bool isLoadingMore;
   final String? errorMessage;
@@ -21,7 +21,7 @@ class PokedexState {
 
   PokedexState copyWith({
     PokedexStatus? status,
-    List<PokemonListItemModel>? pokemon,
+    List<Pokemon>? pokemon,
     bool? hasMore,
     bool? isLoadingMore,
     String? errorMessage,

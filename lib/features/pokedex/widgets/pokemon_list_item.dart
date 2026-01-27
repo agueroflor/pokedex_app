@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../data/models/pokemon_list_item_model.dart';
+import '../domain/entities/pokemon.dart';
 
 class PokemonListItem extends StatelessWidget {
-  final PokemonListItemModel pokemon;
+  final Pokemon pokemon;
 
   const PokemonListItem({super.key, required this.pokemon});
 

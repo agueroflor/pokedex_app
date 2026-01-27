@@ -1,3 +1,5 @@
+import '../../features/pokedex/domain/entities/pokemon.dart';
+
 class PokemonListItemModel {
   final int id;
   final String name;
@@ -23,5 +25,13 @@ class PokemonListItemModel {
     final uri = Uri.parse(url);
     final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
     return int.parse(segments.last);
+  }
+
+  Pokemon toEntity() {
+    return Pokemon(
+      id: id,
+      name: name,
+      imageUrl: imageUrl,
+    );
   }
 }
