@@ -21,6 +21,22 @@ class PokemonListItemModel {
     );
   }
 
+  factory PokemonListItemModel.fromHive(Map<dynamic, dynamic> map) {
+    return PokemonListItemModel(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      imageUrl: map['imageUrl'] as String,
+    );
+  }
+
+  Map<String, dynamic> toHive() {
+    return {
+      'id': id,
+      'name': name,
+      'imageUrl': imageUrl,
+    };
+  }
+
   static int _extractIdFromUrl(String url) {
     final uri = Uri.parse(url);
     final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();

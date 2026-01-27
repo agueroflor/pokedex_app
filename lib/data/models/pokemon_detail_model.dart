@@ -39,6 +39,28 @@ class PokemonDetailModel {
     );
   }
 
+  factory PokemonDetailModel.fromHive(Map<dynamic, dynamic> map) {
+    return PokemonDetailModel(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      height: map['height'] as int,
+      weight: map['weight'] as int,
+      types: (map['types'] as List).cast<String>(),
+      imageUrl: map['imageUrl'] as String,
+    );
+  }
+
+  Map<String, dynamic> toHive() {
+    return {
+      'id': id,
+      'name': name,
+      'height': height,
+      'weight': weight,
+      'types': types,
+      'imageUrl': imageUrl,
+    };
+  }
+
   PokemonDetail toEntity() {
     return PokemonDetail(
       id: id,
