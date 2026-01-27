@@ -3,12 +3,18 @@ import '../domain/entities/pokemon.dart';
 
 class PokemonListItem extends StatelessWidget {
   final Pokemon pokemon;
+  final VoidCallback? onTap;
 
-  const PokemonListItem({super.key, required this.pokemon});
+  const PokemonListItem({
+    super.key,
+    required this.pokemon,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: Image.network(
         pokemon.imageUrl,
         width: 56,

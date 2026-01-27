@@ -1,4 +1,5 @@
 import '../../features/pokedex/domain/entities/pokemon.dart';
+import '../../features/pokedex/domain/entities/pokemon_detail.dart';
 import '../../features/pokedex/domain/repositories/pokemon_repository.dart';
 import '../datasources/remote/pokemon_remote_datasource.dart';
 
@@ -20,5 +21,11 @@ class PokemonRepositoryImpl implements PokemonRepository {
       items: response.results.map((model) => model.toEntity()).toList(),
       hasMore: response.hasMore,
     );
+  }
+
+  @override
+  Future<PokemonDetail> getPokemonDetail(int id) async {
+    final model = await _remoteDatasource.getPokemonDetail(id);
+    return model.toEntity();
   }
 }

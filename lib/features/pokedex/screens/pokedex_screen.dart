@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/network/dio_client.dart';
+import '../../../data/datasources/remote/pokemon_remote_datasource.dart';
+import '../../../data/repositories/pokemon_repository_impl.dart';
 import '../cubit/pokedex_cubit.dart';
 import '../cubit/pokedex_state.dart';
+import '../cubit/pokemon_detail_cubit.dart';
+import '../domain/usecases/get_pokemon_detail_use_case.dart';
 import '../widgets/pokemon_list_item.dart';
+import 'pokemon_detail_screen.dart';
 
 class PokedexScreen extends StatefulWidget {
   const PokedexScreen({super.key});
@@ -39,6 +45,24 @@ class _PokedexScreenState extends State<PokedexScreen> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
     return currentScroll >= (maxScroll - 200);
+  }
+
+  void _navigateToDetail(int pokemonId) {
+    final repository = PokemonRepositoryImpl(
+      PokemonRemoteDatasource(DioClient.instance),
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => PokemonDetailCubit(
+            getPokemonDetail: GetPokemonDetailUseCase(repository),
+            pokemonId: pokemonId,
+          ),
+          child: PokemonDetailScreen(pokemonId: pokemonId),
+        ),
+      ),
+    );
   }
 
   @override
@@ -89,7 +113,11 @@ class _PokedexScreenState extends State<PokedexScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     );
                   }
-                  return PokemonListItem(pokemon: state.pokemon[index]);
+                  final pokemon = state.pokemon[index];
+                  return PokemonListItem(
+                    pokemon: pokemon,
+                    onTap: () => _navigateToDetail(pokemon.id),
+                  );
                 },
               );
           }

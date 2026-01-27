@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../models/pokemon_detail_model.dart';
 import '../../models/pokemon_list_item_model.dart';
 
 class PokemonListResponse {
@@ -40,5 +41,10 @@ class PokemonRemoteDatasource {
       results: results,
       hasMore: hasMore,
     );
+  }
+
+  Future<PokemonDetailModel> getPokemonDetail(int id) async {
+    final response = await _dio.get('/pokemon/$id');
+    return PokemonDetailModel.fromJson(response.data);
   }
 }
