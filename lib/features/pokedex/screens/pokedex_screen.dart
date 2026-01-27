@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/network/dio_client.dart';
-import '../../../data/datasources/remote/pokemon_remote_datasource.dart';
-import '../../../data/repositories/pokemon_repository_impl.dart';
 import '../cubit/pokedex_cubit.dart';
 import '../cubit/pokedex_state.dart';
 import '../cubit/pokemon_detail_cubit.dart';
+import '../domain/repositories/pokemon_repository.dart';
 import '../domain/usecases/get_pokemon_detail_use_case.dart';
 import '../widgets/pokemon_list_item.dart';
 import 'pokemon_detail_screen.dart';
@@ -48,9 +46,7 @@ class _PokedexScreenState extends State<PokedexScreen> {
   }
 
   void _navigateToDetail(int pokemonId) {
-    final repository = PokemonRepositoryImpl(
-      PokemonRemoteDatasource(DioClient.instance),
-    );
+    final repository = context.read<PokemonRepository>();
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -80,27 +76,29 @@ class _PokedexScreenState extends State<PokedexScreen> {
 
             case PokedexStatus.error:
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      state.errorMessage ?? 'An error occurred',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => context.read<PokedexCubit>().loadInitial(),
-                      child: const Text('Retry'),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        state.failure?.message ?? 'An error occurred',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context.read<PokedexCubit>().loadInitial(),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
                 ),
               );
 
-            case PokedexStatus.success:
-              if (state.isEmpty) {
-                return const Center(child: Text('No Pokémon found'));
-              }
+            case PokedexStatus.empty:
+              return const Center(child: Text('No Pokémon found'));
 
+            case PokedexStatus.success:
               return ListView.builder(
                 controller: _scrollController,
                 itemCount: state.hasMore

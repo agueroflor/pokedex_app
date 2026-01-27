@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../../data/exceptions/pokemon_exceptions.dart';
+import '../domain/failures/pokemon_failure.dart';
 import '../domain/usecases/get_pokemon_list_use_case.dart';
 import 'pokedex_state.dart';
 
@@ -14,7 +16,7 @@ class PokedexCubit extends Cubit<PokedexState> {
       pokemon: [],
       hasMore: true,
       isLoadingMore: false,
-      errorMessage: null,
+      failure: null,
     ));
 
     try {
@@ -23,15 +25,24 @@ class PokedexCubit extends Cubit<PokedexState> {
         offset: 0,
       );
 
-      emit(state.copyWith(
-        status: PokedexStatus.success,
-        pokemon: result.items,
-        hasMore: result.hasMore,
-      ));
-    } catch (e) {
+      if (result.items.isEmpty) {
+        emit(state.copyWith(status: PokedexStatus.empty));
+      } else {
+        emit(state.copyWith(
+          status: PokedexStatus.success,
+          pokemon: result.items,
+          hasMore: result.hasMore,
+        ));
+      }
+    } on PokemonException catch (e) {
       emit(state.copyWith(
         status: PokedexStatus.error,
-        errorMessage: 'Failed to load Pokémon. Please try again.',
+        failure: e.failure,
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        status: PokedexStatus.error,
+        failure: const UnexpectedFailure(),
       ));
     }
   }
@@ -52,7 +63,7 @@ class PokedexCubit extends Cubit<PokedexState> {
         hasMore: result.hasMore,
         isLoadingMore: false,
       ));
-    } catch (e) {
+    } catch (_) {
       emit(state.copyWith(isLoadingMore: false));
     }
   }

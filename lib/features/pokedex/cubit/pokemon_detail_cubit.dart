@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/exceptions/pokemon_exceptions.dart';
+import '../domain/failures/pokemon_failure.dart';
 import '../domain/usecases/get_pokemon_detail_use_case.dart';
 import 'pokemon_detail_state.dart';
 
@@ -13,7 +15,7 @@ class PokemonDetailCubit extends Cubit<PokemonDetailState> {
         super(const PokemonDetailState());
 
   Future<void> load() async {
-    emit(state.copyWith(status: PokemonDetailStatus.loading));
+    emit(state.copyWith(status: PokemonDetailStatus.loading, failure: null));
 
     try {
       final pokemon = await _getPokemonDetail(pokemonId);
@@ -21,10 +23,15 @@ class PokemonDetailCubit extends Cubit<PokemonDetailState> {
         status: PokemonDetailStatus.success,
         pokemon: pokemon,
       ));
-    } catch (e) {
+    } on PokemonException catch (e) {
       emit(state.copyWith(
         status: PokemonDetailStatus.error,
-        errorMessage: 'Failed to load Pokémon details. Please try again.',
+        failure: e.failure,
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        status: PokemonDetailStatus.error,
+        failure: const UnexpectedFailure(),
       ));
     }
   }

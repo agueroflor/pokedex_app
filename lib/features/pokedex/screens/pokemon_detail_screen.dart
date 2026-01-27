@@ -35,19 +35,22 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
 
             case PokemonDetailStatus.error:
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      state.errorMessage ?? 'An error occurred',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => context.read<PokemonDetailCubit>().load(),
-                      child: const Text('Retry'),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        state.failure?.message ?? 'An error occurred',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context.read<PokemonDetailCubit>().load(),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
                 ),
               );
 
