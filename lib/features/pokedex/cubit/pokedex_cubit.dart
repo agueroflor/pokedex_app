@@ -50,7 +50,7 @@ class PokedexCubit extends Cubit<PokedexState> {
   }
 
   Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
+    if (state.isLoadingMore || !state.hasMore || state.isSearching) return;
 
     emit(state.copyWith(isLoadingMore: true));
 
@@ -68,5 +68,13 @@ class PokedexCubit extends Cubit<PokedexState> {
     } catch (_) {
       emit(state.copyWith(isLoadingMore: false));
     }
+  }
+
+  void search(String query) {
+    emit(state.copyWith(searchQuery: query));
+  }
+
+  void clearSearch() {
+    emit(state.copyWith(searchQuery: ''));
   }
 }

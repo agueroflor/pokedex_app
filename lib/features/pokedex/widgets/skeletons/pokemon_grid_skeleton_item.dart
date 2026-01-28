@@ -10,22 +10,33 @@ class PokemonGridSkeletonItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PokemonCardSkeleton(
-      child: Column(
+      child: Stack(
         children: [
-          Expanded(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: AppSkeleton(
-                width: double.infinity,
-                height: double.infinity,
-                borderRadius: CardStyles.imageRadius,
+          Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: AppSkeleton(
+                    width: double.infinity,
+                    height: double.infinity,
+                    borderRadius: CardStyles.imageRadius,
+                  ),
+                ),
               ),
+              const SizedBox(height: Spacing.sm),
+              const AppSkeleton(width: 80, height: 18, borderRadius: 4),
+              const SizedBox(height: Spacing.xs),
+            ],
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: AppSkeleton(
+              width: 45,
+              height: 22,
+              borderRadius: Spacing.sm,
             ),
           ),
-          const SizedBox(height: Spacing.md),
-          const AppSkeleton(width: 80, height: 18, borderRadius: 4),
-          const SizedBox(height: Spacing.xs),
-          const AppSkeleton(width: 50, height: 22, borderRadius: 4),
         ],
       ),
     );

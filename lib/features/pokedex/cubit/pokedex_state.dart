@@ -9,6 +9,7 @@ class PokedexState {
   final bool hasMore;
   final bool isLoadingMore;
   final PokemonFailure? failure;
+  final String searchQuery;
 
   const PokedexState({
     this.status = PokedexStatus.initial,
@@ -16,7 +17,19 @@ class PokedexState {
     this.hasMore = true,
     this.isLoadingMore = false,
     this.failure,
+    this.searchQuery = '',
   });
+
+  bool get isSearching => searchQuery.isNotEmpty;
+
+  List<Pokemon> get filteredPokemon {
+    if (!isSearching) return pokemon;
+    final query = searchQuery.toLowerCase();
+    return pokemon.where((p) {
+      return p.name.toLowerCase().contains(query) ||
+          p.displayId.contains(query);
+    }).toList();
+  }
 
   PokedexState copyWith({
     PokedexStatus? status,
@@ -24,6 +37,7 @@ class PokedexState {
     bool? hasMore,
     bool? isLoadingMore,
     PokemonFailure? failure,
+    String? searchQuery,
   }) {
     return PokedexState(
       status: status ?? this.status,
@@ -31,6 +45,7 @@ class PokedexState {
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       failure: failure,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 }
