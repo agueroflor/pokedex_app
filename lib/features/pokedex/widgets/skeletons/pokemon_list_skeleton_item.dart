@@ -1,32 +1,41 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/spacing.dart';
+import '../../../../core/theme/card_styles.dart';
 import '../../../../core/widgets/widgets.dart';
+import 'pokemon_card_skeleton.dart';
 
 class PokemonListSkeletonItem extends StatelessWidget {
   const PokemonListSkeletonItem({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
         horizontal: Spacing.md,
-        vertical: Spacing.sm + Spacing.xs,
+        vertical: Spacing.sm,
       ),
-      child: Row(
-        children: [
-          AppSkeleton(width: 56, height: 56, borderRadius: 28),
-          SizedBox(width: Spacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppSkeleton(width: 120, height: 16),
-                SizedBox(height: Spacing.sm),
-                AppSkeleton(width: 60, height: 12),
-              ],
+      child: PokemonCardSkeleton(
+        child: Row(
+          children: [
+            AppSkeleton(
+              width: 72,
+              height: 72,
+              borderRadius: CardStyles.imageRadius,
             ),
-          ),
-        ],
+            const SizedBox(width: Spacing.md),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppSkeleton(width: 100, height: 18, borderRadius: 4),
+                  SizedBox(height: Spacing.xs),
+                  AppSkeleton(width: 50, height: 22, borderRadius: 4),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

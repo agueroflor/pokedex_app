@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/spacing.dart';
 import '../domain/entities/pokemon.dart';
+import 'pokemon_card.dart';
+import 'pokemon_card_content.dart';
 
 class PokemonListItem extends StatelessWidget {
   final Pokemon pokemon;
@@ -14,34 +16,32 @@ class PokemonListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: Spacing.md,
-        vertical: Spacing.sm,
-      ),
-      leading: Image.network(
-        pokemon.imageUrl,
-        width: 56,
-        height: 56,
-        fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => const SizedBox(
-          width: 56,
-          height: 56,
-          child: Icon(Icons.catching_pokemon),
+    return RepaintBoundary(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Spacing.md,
+          vertical: Spacing.sm,
         ),
-      ),
-      title: Text(
-        pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-      ),
-      subtitle: Text(
-        '#${pokemon.id.toString().padLeft(3, '0')}',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+        child: PokemonCard(
+          onTap: onTap,
+          child: Row(
+            children: [
+              PokemonImageBox(imageUrl: pokemon.imageUrl, size: 72),
+              const SizedBox(width: Spacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PokemonName(name: pokemon.name),
+                    const SizedBox(height: Spacing.xs),
+                    PokemonNumber(id: pokemon.id),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

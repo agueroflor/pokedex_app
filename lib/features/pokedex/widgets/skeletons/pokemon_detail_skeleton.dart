@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/spacing.dart';
+import '../../../../core/theme/card_styles.dart';
 import '../../../../core/widgets/widgets.dart';
+import 'pokemon_card_skeleton.dart';
 
 class PokemonDetailSkeleton extends StatelessWidget {
   const PokemonDetailSkeleton({super.key});
@@ -11,11 +13,15 @@ class PokemonDetailSkeleton extends StatelessWidget {
       padding: const EdgeInsets.all(Spacing.lg),
       child: Column(
         children: [
-          const AppSkeleton(width: 200, height: 200, borderRadius: 16),
+          AppSkeleton(
+            width: 200,
+            height: 200,
+            borderRadius: CardStyles.borderRadius,
+          ),
           const SizedBox(height: Spacing.lg),
-          const AppSkeleton(width: 160, height: 28),
+          const AppSkeleton(width: 160, height: 28, borderRadius: 6),
           const SizedBox(height: Spacing.sm),
-          const AppSkeleton(width: 80, height: 20),
+          const AppSkeleton(width: 80, height: 20, borderRadius: 4),
           const SizedBox(height: Spacing.xl),
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -44,22 +50,15 @@ class _StatCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Spacing.lg,
-          vertical: Spacing.md,
-        ),
-        child: const Column(
-          children: [
-            AppSkeleton(width: 28, height: 28),
-            SizedBox(height: Spacing.sm),
-            AppSkeleton(width: 60, height: 20),
-            SizedBox(height: Spacing.xs),
-            AppSkeleton(width: 40, height: 14),
-          ],
-        ),
+    return PokemonCardSkeleton(
+      child: const Column(
+        children: [
+          AppSkeleton(width: 28, height: 28, borderRadius: 6),
+          SizedBox(height: Spacing.sm),
+          AppSkeleton(width: 60, height: 20, borderRadius: 4),
+          SizedBox(height: Spacing.xs),
+          AppSkeleton(width: 40, height: 14, borderRadius: 4),
+        ],
       ),
     );
   }
