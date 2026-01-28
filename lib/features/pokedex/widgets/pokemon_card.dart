@@ -12,6 +12,8 @@ class PokemonCard extends StatelessWidget {
     required this.child,
   });
 
+  static const _padding = EdgeInsets.all(Spacing.md);
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -20,7 +22,7 @@ class PokemonCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: CardStyles.cardBorderRadius,
         child: Container(
-          padding: const EdgeInsets.all(Spacing.md),
+          padding: _padding,
           decoration: CardStyles.cardDecoration(context),
           child: child,
         ),

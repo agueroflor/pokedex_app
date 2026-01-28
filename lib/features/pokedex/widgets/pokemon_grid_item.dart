@@ -14,6 +14,8 @@ class PokemonGridItem extends StatelessWidget {
     this.onTap,
   });
 
+  static const _aspectRatio = 1.0;
+
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
@@ -23,14 +25,20 @@ class PokemonGridItem extends StatelessWidget {
           children: [
             Expanded(
               child: AspectRatio(
-                aspectRatio: 1,
+                aspectRatio: _aspectRatio,
                 child: PokemonImageBox(imageUrl: pokemon.imageUrl),
               ),
             ),
             const SizedBox(height: Spacing.md),
-            PokemonName(name: pokemon.name, textAlign: TextAlign.center),
+            PokemonName(
+              displayName: pokemon.displayName,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: Spacing.xs),
-            PokemonNumber(id: pokemon.id, textAlign: TextAlign.center),
+            PokemonNumber(
+              displayId: pokemon.displayId,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

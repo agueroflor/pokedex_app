@@ -14,52 +14,63 @@ class PokemonImageBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = size != null ? size! * 0.5 : 48.0;
-    final outlineColor = Theme.of(context).colorScheme.outline;
+    final resolvedSize = size;
+    final iconSize = resolvedSize != null ? resolvedSize * 0.5 : 48.0;
+    final cacheSize = resolvedSize?.toInt();
 
     return Container(
-      width: size,
-      height: size,
+      width: resolvedSize,
+      height: resolvedSize,
       decoration: CardStyles.imageContainerDecoration(context),
       child: ClipRRect(
         borderRadius: CardStyles.imageBorderRadius,
         child: CachedNetworkImage(
           imageUrl: imageUrl,
           fit: BoxFit.contain,
-          placeholder: (_, __) => Icon(
-            Icons.catching_pokemon,
-            size: iconSize,
-            color: outlineColor.withValues(alpha: 0.3),
-          ),
-          errorWidget: (_, __, ___) => Icon(
-            Icons.catching_pokemon,
-            size: iconSize,
-            color: outlineColor,
-          ),
+          memCacheWidth: cacheSize,
+          memCacheHeight: cacheSize,
+          placeholder: (_, __) => _PlaceholderIcon(size: iconSize, opacity: 0.3),
+          errorWidget: (_, __, ___) => _PlaceholderIcon(size: iconSize),
         ),
       ),
     );
   }
 }
 
+class _PlaceholderIcon extends StatelessWidget {
+  final double size;
+  final double opacity;
+
+  const _PlaceholderIcon({
+    required this.size,
+    this.opacity = 1.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.outline;
+    return Icon(
+      Icons.catching_pokemon,
+      size: size,
+      color: opacity < 1.0 ? color.withValues(alpha: opacity) : color,
+    );
+  }
+}
+
 class PokemonName extends StatelessWidget {
-  final String name;
+  final String displayName;
   final TextAlign textAlign;
 
   const PokemonName({
     super.key,
-    required this.name,
+    required this.displayName,
     this.textAlign = TextAlign.start,
   });
 
   @override
   Widget build(BuildContext context) {
-    final capitalized = name.isNotEmpty
-        ? '${name[0].toUpperCase()}${name.substring(1)}'
-        : name;
-
     return Text(
-      capitalized,
+      displayName,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: -0.3,
@@ -72,19 +83,19 @@ class PokemonName extends StatelessWidget {
 }
 
 class PokemonNumber extends StatelessWidget {
-  final int id;
+  final String displayId;
   final TextAlign textAlign;
 
   const PokemonNumber({
     super.key,
-    required this.id,
+    required this.displayId,
     this.textAlign = TextAlign.start,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      '#${id.toString().padLeft(3, '0')}',
+      displayId,
       style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.primary,

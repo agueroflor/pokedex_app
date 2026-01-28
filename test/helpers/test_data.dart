@@ -23,19 +23,19 @@ const tPokemonModel3 = PokemonListItemModel(
 
 final tPokemonModels = [tPokemonModel1, tPokemonModel2, tPokemonModel3];
 
-const tPokemon1 = Pokemon(
+final tPokemon1 = Pokemon(
   id: 1,
   name: 'bulbasaur',
   imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
 );
 
-const tPokemon2 = Pokemon(
+final tPokemon2 = Pokemon(
   id: 2,
   name: 'ivysaur',
   imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png',
 );
 
-const tPokemon3 = Pokemon(
+final tPokemon3 = Pokemon(
   id: 3,
   name: 'venusaur',
   imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png',

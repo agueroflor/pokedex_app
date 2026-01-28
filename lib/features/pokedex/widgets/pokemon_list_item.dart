@@ -14,28 +14,34 @@ class PokemonListItem extends StatelessWidget {
     this.onTap,
   });
 
+  static const _padding = EdgeInsets.symmetric(
+    horizontal: Spacing.md,
+    vertical: Spacing.sm,
+  );
+  static const _imageSize = 72.0;
+
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Spacing.md,
-          vertical: Spacing.sm,
-        ),
+        padding: _padding,
         child: PokemonCard(
           onTap: onTap,
           child: Row(
             children: [
-              PokemonImageBox(imageUrl: pokemon.imageUrl, size: 72),
+              PokemonImageBox(
+                imageUrl: pokemon.imageUrl,
+                size: _imageSize,
+              ),
               const SizedBox(width: Spacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    PokemonName(name: pokemon.name),
+                    PokemonName(displayName: pokemon.displayName),
                     const SizedBox(height: Spacing.xs),
-                    PokemonNumber(id: pokemon.id),
+                    PokemonNumber(displayId: pokemon.displayId),
                   ],
                 ),
               ),
