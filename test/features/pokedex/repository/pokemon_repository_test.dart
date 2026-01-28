@@ -27,8 +27,7 @@ void main() {
 
   group('getPokemonList', () {
     test('returns data from remote and saves to cache on success', () async {
-      when(() => mockLocal.getPokemonList())
-          .thenAnswer((_) async => []);
+      when(() => mockLocal.getPokemonList()).thenReturn([]);
       when(() => mockRemote.getPokemonList(limit: 20, offset: 0))
           .thenAnswer((_) async => tPokemonListResponse);
       when(() => mockLocal.savePokemonList(any()))
@@ -45,8 +44,7 @@ void main() {
     });
 
     test('returns cached data when remote fails and cache exists', () async {
-      when(() => mockLocal.getPokemonList())
-          .thenAnswer((_) async => tPokemonModels);
+      when(() => mockLocal.getPokemonList()).thenReturn(tPokemonModels);
       when(() => mockRemote.getPokemonList(limit: 20, offset: 0))
           .thenThrow(DioException(requestOptions: RequestOptions()));
 
@@ -57,8 +55,7 @@ void main() {
     });
 
     test('throws NetworkFailure when remote fails and cache is empty', () async {
-      when(() => mockLocal.getPokemonList())
-          .thenAnswer((_) async => []);
+      when(() => mockLocal.getPokemonList()).thenReturn([]);
       when(() => mockRemote.getPokemonList(limit: 20, offset: 0))
           .thenThrow(DioException(
             type: DioExceptionType.connectionError,
@@ -76,8 +73,7 @@ void main() {
     });
 
     test('returns empty list when offset exceeds cache size', () async {
-      when(() => mockLocal.getPokemonList())
-          .thenAnswer((_) async => tPokemonModels);
+      when(() => mockLocal.getPokemonList()).thenReturn(tPokemonModels);
       when(() => mockRemote.getPokemonList(limit: 20, offset: 100))
           .thenThrow(DioException(requestOptions: RequestOptions()));
 
@@ -88,8 +84,7 @@ void main() {
     });
 
     test('paginates correctly from cache when remote fails', () async {
-      when(() => mockLocal.getPokemonList())
-          .thenAnswer((_) async => tPokemonModels);
+      when(() => mockLocal.getPokemonList()).thenReturn(tPokemonModels);
       when(() => mockRemote.getPokemonList(limit: 2, offset: 0))
           .thenThrow(DioException(requestOptions: RequestOptions()));
 
@@ -101,8 +96,7 @@ void main() {
 
     test('appends to existing cache on pagination', () async {
       final existingCache = [tPokemonModel1, tPokemonModel2];
-      when(() => mockLocal.getPokemonList())
-          .thenAnswer((_) async => existingCache);
+      when(() => mockLocal.getPokemonList()).thenReturn(existingCache);
       when(() => mockRemote.getPokemonList(limit: 20, offset: 2))
           .thenAnswer((_) async => tPokemonListResponseNoMore);
       when(() => mockLocal.savePokemonList(any()))
@@ -118,8 +112,7 @@ void main() {
 
   group('getPokemonDetail', () {
     test('returns data from remote and saves to cache on success', () async {
-      when(() => mockLocal.getPokemonDetail(1))
-          .thenAnswer((_) async => null);
+      when(() => mockLocal.getPokemonDetail(1)).thenReturn(null);
       when(() => mockRemote.getPokemonDetail(1))
           .thenAnswer((_) async => tPokemonDetailModel);
       when(() => mockLocal.savePokemonDetail(any()))
@@ -135,8 +128,7 @@ void main() {
     });
 
     test('returns cached data when remote fails and cache exists', () async {
-      when(() => mockLocal.getPokemonDetail(1))
-          .thenAnswer((_) async => tPokemonDetailModel);
+      when(() => mockLocal.getPokemonDetail(1)).thenReturn(tPokemonDetailModel);
       when(() => mockRemote.getPokemonDetail(1))
           .thenThrow(DioException(requestOptions: RequestOptions()));
 
@@ -147,8 +139,7 @@ void main() {
     });
 
     test('throws NetworkFailure when remote fails and cache is empty', () async {
-      when(() => mockLocal.getPokemonDetail(1))
-          .thenAnswer((_) async => null);
+      when(() => mockLocal.getPokemonDetail(1)).thenReturn(null);
       when(() => mockRemote.getPokemonDetail(1))
           .thenThrow(DioException(
             type: DioExceptionType.connectionTimeout,
@@ -166,8 +157,7 @@ void main() {
     });
 
     test('throws UnexpectedFailure for non-network errors', () async {
-      when(() => mockLocal.getPokemonDetail(1))
-          .thenAnswer((_) async => null);
+      when(() => mockLocal.getPokemonDetail(1)).thenReturn(null);
       when(() => mockRemote.getPokemonDetail(1))
           .thenThrow(Exception('unknown error'));
 

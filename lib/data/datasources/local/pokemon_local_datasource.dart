@@ -3,16 +3,21 @@ import 'package:hive/hive.dart';
 import '../../models/models.dart';
 
 class PokemonLocalDatasource {
-  static const String _listBoxName = 'pokemon_list';
-  static const String _detailBoxName = 'pokemon_detail';
+  static const String listBoxName = 'pokemon_list';
+  static const String detailBoxName = 'pokemon_detail';
   static const String _listKey = 'cached_list';
 
-  Future<Box> get _listBox => Hive.openBox(_listBoxName);
-  Future<Box> get _detailBox => Hive.openBox(_detailBoxName);
+  final Box _listBox;
+  final Box _detailBox;
 
-  Future<List<PokemonListItemModel>> getPokemonList() async {
-    final box = await _listBox;
-    final data = box.get(_listKey);
+  PokemonLocalDatasource({
+    required Box listBox,
+    required Box detailBox,
+  })  : _listBox = listBox,
+        _detailBox = detailBox;
+
+  List<PokemonListItemModel> getPokemonList() {
+    final data = _listBox.get(_listKey);
     if (data == null) return [];
 
     return (data as List)
@@ -21,21 +26,18 @@ class PokemonLocalDatasource {
   }
 
   Future<void> savePokemonList(List<PokemonListItemModel> pokemon) async {
-    final box = await _listBox;
     final data = pokemon.map((p) => p.toHive()).toList();
-    await box.put(_listKey, data);
+    await _listBox.put(_listKey, data);
   }
 
-  Future<PokemonDetailModel?> getPokemonDetail(int id) async {
-    final box = await _detailBox;
-    final data = box.get(id);
+  PokemonDetailModel? getPokemonDetail(int id) {
+    final data = _detailBox.get(id);
     if (data == null) return null;
 
     return PokemonDetailModel.fromHive(data);
   }
 
   Future<void> savePokemonDetail(PokemonDetailModel detail) async {
-    final box = await _detailBox;
-    await box.put(detail.id, detail.toHive());
+    await _detailBox.put(detail.id, detail.toHive());
   }
 }

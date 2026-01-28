@@ -1,46 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'core/network/dio_client.dart';
 
+import 'core/di/dependencies.dart';
+import 'core/theme/theme.dart';
 import 'features/pokedex/cubit/cubits.dart';
-import 'features/pokedex/screens/screens.dart';
-import 'data/repositories/pokemon_repository_impl.dart';
-import 'data/datasources/local/pokemon_local_datasource.dart';
-import 'data/datasources/remote/pokemon_remote_datasource.dart';
 import 'features/pokedex/domain/repositories/pokemon_repository.dart';
 import 'features/pokedex/domain/usecases/get_pokemon_list_use_case.dart';
+import 'features/pokedex/screens/screens.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  runApp(const PokedexApp());
+  final dependencies = await Dependencies.init();
+  runApp(PokedexApp(dependencies: dependencies));
 }
 
 class PokedexApp extends StatelessWidget {
-  const PokedexApp({super.key});
+  final Dependencies dependencies;
+
+  const PokedexApp({super.key, required this.dependencies});
 
   @override
   Widget build(BuildContext context) {
-    final repository = PokemonRepositoryImpl(
-      PokemonRemoteDatasource(DioClient.instance),
-      PokemonLocalDatasource(),
-    );
-
-    return RepositoryProvider<PokemonRepository>.value(
-      value: repository,
-      child: MaterialApp(
-        title: 'Pokédex',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-          useMaterial3: true,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<PokemonRepository>.value(
+          value: dependencies.pokemonRepository,
         ),
-        home: BlocProvider(
-          create: (_) => PokedexCubit(
-            GetPokemonListUseCase(repository),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => PokedexCubit(
+              GetPokemonListUseCase(dependencies.pokemonRepository),
+            ),
           ),
-          child: const PokedexScreen(),
+        ],
+        child: MaterialApp(
+          title: 'Pokédex',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          home: const PokedexScreen(),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import '../../features/pokedex/domain/entities/pokemon.dart';
 import '../../features/pokedex/domain/entities/pokemon_detail.dart';
 import '../../features/pokedex/domain/failures/pokemon_failure.dart';
@@ -18,7 +19,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
     required int limit,
     required int offset,
   }) async {
-    final cachedModels = await _localDatasource.getPokemonList();
+    final cachedModels = _localDatasource.getPokemonList();
 
     try {
       final response = await _remoteDatasource.getPokemonList(
@@ -59,7 +60,7 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
   @override
   Future<PokemonDetail> getPokemonDetail(int id) async {
-    final cached = await _localDatasource.getPokemonDetail(id);
+    final cached = _localDatasource.getPokemonDetail(id);
 
     try {
       final model = await _remoteDatasource.getPokemonDetail(id);
