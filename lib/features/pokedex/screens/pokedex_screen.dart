@@ -213,34 +213,45 @@ class _SearchBar extends StatelessWidget {
     vertical: Spacing.sm,
   );
 
+  // Constrain width on large screens to align with content grid
+  // and avoid edge-to-edge inputs that feel disconnected on desktop.
+  static const _maxWidth = ResponsiveLayout.maxContentWidth;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: _padding,
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          hintText: 'Search Pokemon',
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: isSearching
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: onClear,
-                )
-              : null,
-          filled: true,
-          fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Spacing.md),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: Spacing.md,
-            vertical: Spacing.sm,
-          ),
+    final textField = TextField(
+      controller: controller,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        hintText: 'Search Pokemon',
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: isSearching
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: onClear,
+              )
+            : null,
+        filled: true,
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Spacing.md),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: Spacing.md,
+          vertical: Spacing.sm,
+        ),
+      ),
+    );
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
+        child: Padding(
+          padding: _padding,
+          child: textField,
         ),
       ),
     );
