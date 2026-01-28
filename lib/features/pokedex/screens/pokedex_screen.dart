@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'screens.dart';
 import '../cubit/cubits.dart';
+import '../domain/entities/pokemon.dart';
 import '../widgets/widgets.dart';
-import '../../../core/constants/spacing.dart';
+import '../../../core/constants/constants.dart';
 import '../../../core/widgets/widgets.dart';
 import '../domain/repositories/pokemon_repository.dart';
 import '../domain/usecases/get_pokemon_detail_use_case.dart';
@@ -18,6 +21,9 @@ class PokedexScreen extends StatefulWidget {
 
 class _PokedexScreenState extends State<PokedexScreen> {
   final _scrollController = ScrollController();
+  int _lastPrecachedCount = 0;
+
+  static const _precacheAhead = 10;
 
   @override
   void initState() {
@@ -46,6 +52,23 @@ class _PokedexScreenState extends State<PokedexScreen> {
     return currentScroll >= (maxScroll - 300);
   }
 
+  void _precacheImages(List<Pokemon> pokemon) {
+    if (pokemon.length <= _lastPrecachedCount) return;
+
+    final newItems = pokemon.skip(_lastPrecachedCount).take(_precacheAhead);
+    _lastPrecachedCount = pokemon.length;
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      for (final item in newItems) {
+        precacheImage(
+          CachedNetworkImageProvider(item.imageUrl),
+          context,
+        );
+      }
+    });
+  }
+
   void _navigateToDetail(int pokemonId) {
     final repository = context.read<PokemonRepository>();
 
@@ -69,7 +92,12 @@ class _PokedexScreenState extends State<PokedexScreen> {
         title: const Text('Pokédex'),
         centerTitle: true,
       ),
-      body: BlocBuilder<PokedexCubit, PokedexState>(
+      body: BlocConsumer<PokedexCubit, PokedexState>(
+        listener: (context, state) {
+          if (state.status == PokedexStatus.success) {
+            _precacheImages(state.pokemon);
+          }
+        },
         builder: (context, state) {
           return switch (state.status) {
             PokedexStatus.initial || PokedexStatus.loading => ResponsiveLayout(
@@ -156,7 +184,7 @@ class _GridSkeletonView extends StatelessWidget {
 
 class _PokemonListView extends StatelessWidget {
   final ScrollController scrollController;
-  final List<dynamic> pokemon;
+  final List<Pokemon> pokemon;
   final bool isLoadingMore;
   final bool hasMore;
   final void Function(int) onTap;
@@ -195,7 +223,7 @@ class _PokemonListView extends StatelessWidget {
 
 class _PokemonGridView extends StatelessWidget {
   final ScrollController scrollController;
-  final List<dynamic> pokemon;
+  final List<Pokemon> pokemon;
   final bool isLoadingMore;
   final bool hasMore;
   final void Function(int) onTap;
