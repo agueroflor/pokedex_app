@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/spacing.dart';
-import '../../../../core/theme/card_styles.dart';
+import '../../../../core/constants/constants.dart';
+import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import 'pokemon_card_skeleton.dart';
 
@@ -14,8 +14,8 @@ class PokemonDetailSkeleton extends StatelessWidget {
       child: Column(
         children: [
           AppSkeleton(
-            width: 200,
-            height: 200,
+            width: Sizes.detailImage,
+            height: Sizes.detailImage,
             borderRadius: CardStyles.borderRadius,
           ),
           const SizedBox(height: Spacing.lg),
@@ -50,8 +50,8 @@ class _StatCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PokemonCardSkeleton(
-      child: const Column(
+    return const PokemonCardSkeleton(
+      child: Column(
         children: [
           AppSkeleton(width: 28, height: 28, borderRadius: 6),
           SizedBox(height: Spacing.sm),

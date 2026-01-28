@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/card_styles.dart';
+import '../../../core/theme/theme.dart';
 
 class PokemonImageBox extends StatelessWidget {
   final String imageUrl;

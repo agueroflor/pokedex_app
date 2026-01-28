@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/spacing.dart';
-import '../../../../core/theme/card_styles.dart';
+import '../../../../core/constants/constants.dart';
+import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/widgets.dart';
 import 'pokemon_card_skeleton.dart';
 
@@ -18,8 +18,8 @@ class PokemonListSkeletonItem extends StatelessWidget {
         child: Row(
           children: [
             AppSkeleton(
-              width: 72,
-              height: 72,
+              width: Sizes.listItemImage,
+              height: Sizes.listItemImage,
               borderRadius: CardStyles.imageRadius,
             ),
             const SizedBox(width: Spacing.md),

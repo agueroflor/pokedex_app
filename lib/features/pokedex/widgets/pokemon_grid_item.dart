@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/spacing.dart';
+import '../../../core/constants/constants.dart';
 import '../domain/entities/pokemon.dart';
 import 'pokemon_card.dart';
 import 'pokemon_card_content.dart';
