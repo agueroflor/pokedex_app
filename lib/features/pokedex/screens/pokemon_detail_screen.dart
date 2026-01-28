@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/cubits.dart';
-import '../widgets/widgets.dart';
-import '../../../core/constants/spacing.dart';
+import '../../../core/constants/constants.dart';
 import '../../../core/utils/responsive_utils.dart';
 import '../../../core/widgets/widgets.dart';
+import '../cubit/cubits.dart';
 import '../domain/entities/pokemon_detail.dart';
+import '../widgets/widgets.dart';
 
 class PokemonDetailScreen extends StatefulWidget {
   final int pokemonId;
@@ -66,13 +67,19 @@ class _DetailContent extends StatelessWidget {
 
   const _DetailContent({required this.pokemon});
 
+  static const _imageSizeLandscape = 140.0;
+  static const _imageSizePortrait = 200.0;
+  static const _iconSize = 80.0;
+  static const _cacheSize = 200;
+
   @override
   Widget build(BuildContext context) {
     final isLandscape = ResponsiveUtils.isLandscape(context);
     final isMobile = ResponsiveLayout.isMobile(context);
+    final isCompact = isLandscape && isMobile;
 
-    final verticalPadding = isLandscape && isMobile ? Spacing.md : Spacing.lg;
-    final imageSize = isLandscape && isMobile ? 140.0 : 200.0;
+    final verticalPadding = isCompact ? Spacing.md : Spacing.lg;
+    final imageSize = isCompact ? _imageSizeLandscape : _imageSizePortrait;
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
@@ -83,19 +90,21 @@ class _DetailContent extends StatelessWidget {
         children: [
           Hero(
             tag: 'pokemon-${pokemon.id}',
-            child: Image.network(
-              pokemon.imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: pokemon.imageUrl,
               height: imageSize,
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => SizedBox(
+              memCacheWidth: _cacheSize,
+              memCacheHeight: _cacheSize,
+              errorWidget: (_, __, ___) => SizedBox(
                 height: imageSize,
-                child: const Icon(Icons.catching_pokemon, size: 80),
+                child: const Icon(Icons.catching_pokemon, size: _iconSize),
               ),
             ),
           ),
           SizedBox(height: isLandscape ? Spacing.sm : Spacing.md),
           Text(
-            pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+            pokemon.displayName,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: ResponsiveUtils.scaledFontSize(context, 28),
@@ -103,32 +112,15 @@ class _DetailContent extends StatelessWidget {
           ),
           const SizedBox(height: Spacing.xs),
           Text(
-            '#${pokemon.id.toString().padLeft(3, '0')}',
+            pokemon.displayId,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                   fontSize: ResponsiveUtils.scaledFontSize(context, 16),
                 ),
           ),
-          SizedBox(height: isLandscape ? Spacing.md : Spacing.lg),
-          Wrap(
-            spacing: Spacing.sm,
-            runSpacing: Spacing.sm,
-            alignment: WrapAlignment.center,
-            children: pokemon.types
-                .map((type) => Chip(
-                      label: Text(
-                        type[0].toUpperCase() + type.substring(1),
-                        style: TextStyle(
-                          fontSize: ResponsiveUtils.scaledFontSize(context, 14),
-                        ),
-                      ),
-                      backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
-                      padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
-                    ))
-                .toList(),
-          ),
-          SizedBox(height: isLandscape ? Spacing.lg : Spacing.xl),
+          SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
+          _TypeChips(types: pokemon.displayTypes, isCompact: isCompact),
+          SizedBox(height: isCompact ? Spacing.lg : Spacing.xl),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -136,7 +128,7 @@ class _DetailContent extends StatelessWidget {
                 child: _StatCard(
                   icon: Icons.height,
                   label: 'Altura',
-                  value: '${(pokemon.height / 10).toStringAsFixed(1)} m',
+                  value: pokemon.displayHeight,
                 ),
               ),
               const SizedBox(width: Spacing.md),
@@ -144,7 +136,7 @@ class _DetailContent extends StatelessWidget {
                 child: _StatCard(
                   icon: Icons.fitness_center,
                   label: 'Peso',
-                  value: '${(pokemon.weight / 10).toStringAsFixed(1)} kg',
+                  value: pokemon.displayWeight,
                 ),
               ),
             ],
@@ -152,6 +144,34 @@ class _DetailContent extends StatelessWidget {
           SizedBox(height: verticalPadding),
         ],
       ),
+    );
+  }
+}
+
+class _TypeChips extends StatelessWidget {
+  final List<String> types;
+  final bool isCompact;
+
+  const _TypeChips({required this.types, required this.isCompact});
+
+  static const _chipPadding = EdgeInsets.symmetric(horizontal: Spacing.sm);
+
+  @override
+  Widget build(BuildContext context) {
+    final fontSize = ResponsiveUtils.scaledFontSize(context, 14);
+    final backgroundColor = Theme.of(context).colorScheme.secondaryContainer;
+
+    return Wrap(
+      spacing: Spacing.sm,
+      runSpacing: Spacing.sm,
+      alignment: WrapAlignment.center,
+      children: types
+          .map((type) => Chip(
+                label: Text(type, style: TextStyle(fontSize: fontSize)),
+                backgroundColor: backgroundColor,
+                padding: _chipPadding,
+              ))
+          .toList(),
     );
   }
 }
@@ -167,22 +187,23 @@ class _StatCard extends StatelessWidget {
     required this.value,
   });
 
+  static const _padding = EdgeInsets.symmetric(
+    horizontal: Spacing.lg,
+    vertical: Spacing.md,
+  );
+  static const _iconSize = 28.0;
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Spacing.lg,
-          vertical: Spacing.md,
-        ),
+        padding: _padding,
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-              size: 28,
-            ),
+            Icon(icon, color: colorScheme.primary, size: _iconSize),
             const SizedBox(height: Spacing.sm),
             Text(
               value,
@@ -195,7 +216,7 @@ class _StatCard extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
+                    color: colorScheme.outline,
                   ),
             ),
           ],

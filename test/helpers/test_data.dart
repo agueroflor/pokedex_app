@@ -52,7 +52,7 @@ const tPokemonDetailModel = PokemonDetailModel(
   imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
 );
 
-const tPokemonDetail = PokemonDetail(
+final tPokemonDetail = PokemonDetail(
   id: 1,
   name: 'bulbasaur',
   height: 7,
